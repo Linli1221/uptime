@@ -3,11 +3,17 @@ FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
 
-# Copy frontend code
-COPY frontend/ .
+# Copy package files first to leverage Docker cache
+COPY frontend/package*.json ./
+
+# List files for debugging
+RUN ls -la
 
 # Install dependencies
 RUN npm install
+
+# Copy the rest of the frontend source code
+COPY frontend/ .
 
 # Build the Next.js application for static export
 RUN npm run build
@@ -28,7 +34,7 @@ RUN go mod download
 COPY backend/ ./
 
 # Copy the built frontend static files from the frontend-builder stage
-COPY --from=frontend-builder /app/frontend/out ./frontend_dist
+COPY --from=frontend-builder /app/out ./frontend_dist
 
 # Build the Go application
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main .
