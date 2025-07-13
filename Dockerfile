@@ -4,10 +4,8 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 
 # Copy package files first to leverage Docker cache
-COPY frontend/package*.json ./
-
-# List files for debugging
-RUN ls -la
+COPY frontend/package.json ./
+COPY frontend/package-lock.json ./
 
 # Install dependencies
 RUN npm install
