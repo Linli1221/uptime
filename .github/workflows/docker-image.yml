@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
     permissions:
       contents: read
       packages: write
@@ -29,9 +32,6 @@ jobs:
         images: ghcr.io/${{ github.repository }}
         tags: |
           type=sha,format=long
-
-    - name: List files in the workspace
-      run: ls -R
 
     - name: Build and push
       uses: docker/build-push-action@v4
